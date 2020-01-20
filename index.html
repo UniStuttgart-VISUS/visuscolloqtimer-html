@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <title>VISUS Colloquium Timer</title>
+    <style>
+        body {
+            background: #222;
+            color: #fff;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        div {
+            margin: 15px;
+        }
+
+        button,
+        input {
+            padding: 5px;
+            border: none;
+            background: #444;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        
+        button.stop,
+        button.start,
+        button.reset {
+          padding: 10px;
+        }
+        button.start {
+          background: #080;
+        }
+        button.stop {
+          background: #c22;
+        }
+        button.reset {
+          background: #fd2;
+          color: #000;
+        }
+
+        input {
+            width: 5em;
+        }
+        
+        #currentTime,
+        #timeLeft {
+          font-size: 2em;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <!-- sound edited from http://soundbible.com/1787-Annoying-Alarm-Clock.html -->
+    <audio id="alarmSound" loop preload="none" onpause="alarmSound.currentTime = 0;" src="data:video/ogg;base64,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UkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSqmklFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimVUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFIKAJCKcACQejChDBQashIASAUAAIxRSinGnIMQMeYYY9BJKClizDnGHJSSUuUchBBSaS23yjkIIaTUUm2Zc1JaizHmGDPnpKQUW805h1JSi7HmmmvupLRWa64151paqzXXnHPNubQWa64515xzyzHXnHPOOecYc84555xzzgUA4DQ4AIAe2LA6wknRWGChISsBgFQAAAIZpRhzzjnoEFKMOecchBAihRhzzjkIIVSMOeccdBBCqBhzzDkIIYSQOecchBBCCCFzDjroIIQQQgcdhBBCCKGUzkEIIYQQSighhBBCCCGEEDoIIYQQQgghhBBCCCGEUkoIIYQQQgmhlFAAAGCBAwBAgA2rI5wUjQUWGrISAAACAIAclqBSzoRBjkGPDUHKUTMNQkw50ZliTmozFVOQORCddBIZakHZXjILAACAIAAgwAQQGCAo+EIIiDEAAEGIzBAJhVWwwKAMGhzmAcADRIREAJCYoEi7uIAuA1zQxV0HQghCEIJYHEABCTg44YYn3vCEG5ygU1TqIAAAAAAADADgAQDgoAAiIpqrsLjAyNDY4OjwCAAAAAAAFgD4AAA4PoCIiOYqLC4wMjQ2ODo8AgAAAAAAAAAAgICAAAAAAABAAAAAgIBPZ2dTAAQqVQAAAAAAABpxAAACAAAAS9i3Qh0gJJeIio6NjYuOj4mUjR0dHR0hIIiJhIiHh42MiRRnK5/H7bEXoACGIV6d/thQVaYX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">
+    The browser does not support audio elements with data URIs.
+    </audio>
+
+    <div>
+        <button onclick='startPresentation()' class="start">
+            Start
+        </button>
+        <button onclick='stopSound()' class="stop">
+            Stop sound
+        </button>
+        <button onclick='reset()' class="reset">
+            Reset
+        </button>
+    </div>
+    <div>
+        <label>
+            Presentation length (min):
+            <input id='totalTime' type='number' min='1' step='1' value='5' />
+        </label>
+    </div>
+    <div>
+        <label>
+            Warning after (min):
+            <input id='warningTime' type='number' min='0' step='0.5' value='4' />
+        </label>
+    </div>
+    <div>
+        <button onclick='preset(5)'>
+            Preset 5 minutes
+        </button>
+        <button onclick='preset(30)'>
+            Preset 30 minutes
+        </button>
+    </div>
+    <div>
+        <button onclick='shortPeep()'>
+            Test warning
+        </button>
+        <button onclick='testAlarm()'>
+            Test alarm
+        </button>
+    </div>
+    <div>
+        Current time:
+        <span id='currentTime'>--:--</span>
+    </div>
+    <div>
+        Time left:
+        <span id='timeLeft'>--:--</span>
+    </div>
+</body>
+<script>
+    const warningVolume = 0.5;
+    const warningFreq = 1050;
+    let osc = null;
+    let osc2 = null;
+    let gain = null;
+    
+    let startTime;
+    let totalTime;
+    
+    let clockTimer;
+    let warningTimer;
+    let alarmTimer;
+    let testAlarmTimer;
+    
+    const alarmSoundElement = document.getElementById("alarmSound");
+    const totalTimeElement = document.getElementById('totalTime');
+    const warningTimeElement = document.getElementById('warningTime');
+    const currentTimeElement = document.getElementById("currentTime");
+    const timeLeftElement = document.getElementById("timeLeft");
+    
+    let isPresentationRunning = false;
+
+    function startAlarm() {
+        alarmSoundElement.play();
+    };
+
+    function testAlarm() {
+        if (!alarmSoundElement.paused)
+          return;
+          
+        alarmSoundElement.play();
+        testAlarmTimer = setTimeout(() => alarmSoundElement.pause(), 4000);
+    };
+
+    function shortPeep() {
+        if (osc !== null)
+          return;
+
+        const audio = new AudioContext();
+        
+        gain = audio.createGain();
+        gain.gain.value = warningVolume;
+        gain.connect(audio.destination);
+        
+
+        osc = gain.context.createOscillator();
+        osc.frequency.value = warningFreq;
+        osc.connect(gain);
+        osc.onended = () => osc = null;
+        
+        
+        osc2 = gain.context.createOscillator();
+        osc2.frequency.value = warningFreq;
+        osc2.connect(gain);
+        osc2.onended = () => { osc2 = null; gain.disconnect(); gain = null; }
+        
+        osc.start();
+        osc.stop(0.1);
+        osc2.start(0.2);
+        osc2.stop(0.3);
+    }
+
+    function stopSound() {
+        if (osc !== null)
+          osc.stop();
+        if (osc2 !== null)
+          osc2.stop();
+        alarmSoundElement.pause();
+    }
+
+    function timeFormat(ms) {
+        if (ms === undefined)
+            return "--:--"
+    
+        const seconds = Math.round(Math.abs(ms) / 1000);
+        let min = (Math.floor(seconds / 60)).toString();
+        let sec = (seconds % 60).toString();
+        min = min.length < 2 ? `0${min}` : min;
+        sec = sec.length < 2 ? `0${sec}` : sec;
+        
+        return `${ms < 0 ? "- " : ""}${min}:${sec}`;
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const elapsed = now - startTime;
+        const left = totalTime * 60_000 - elapsed;
+        
+        currentTimeElement.innerHTML = timeFormat(elapsed);
+        timeLeftElement.innerHTML = timeFormat(left);
+    }
+
+    function resetClock() {
+        clearTimeout(clockTimer);
+        
+        currentTimeElement.innerHTML = timeFormat();
+        timeLeftElement.innerHTML = timeFormat();
+    }
+
+    function reset() {
+        stopSound();
+        clearTimeout(alarmTimer);
+        clearTimeout(warningTimer);
+        clearTimeout(testAlarmTimer);
+        
+        resetClock();
+        
+        isPresentationRunning = false;
+    }
+
+    function startPresentation() {
+        if (isPresentationRunning === true)
+          return;
+    
+        startTime = new Date();
+        totalTime = +totalTimeElement.value;
+        const warningTime = +warningTimeElement.value;
+        console.log(`Total time: ${totalTime}m\nWarning time: ${warningTime}m`);
+        
+        isPresentationRunning = true;
+        
+        warningTimer = setTimeout(shortPeep, warningTime * 60_000);
+        alarmTimer = setTimeout(testAlarm, totalTime * 60_000);
+        clockTimer = setInterval(updateClock, 1000);
+    }
+
+    function preset(time) {
+        totalTimeElement.value = time;
+        warningTimeElement.value = time-1;
+    }
+</script>
+
+</html>
