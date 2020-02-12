@@ -116,13 +116,13 @@
     let osc2 = null;
     let gain = null;
     
-    let startTime;
-    let totalTime;
+    let startTime = new Date();
+    let totalTime =  0;
     
-    let clockTimer;
-    let warningTimer;
-    let alarmTimer;
-    let testAlarmTimer;
+    let clockTimer = null;
+    let warningTimer = null;
+    let alarmTimer = null;
+    let testAlarmTimer = null;
     
     const alarmSoundElement = document.getElementById("alarmSound");
     const totalTimeElement = document.getElementById('totalTime');
@@ -196,7 +196,7 @@
     function updateClock() {
         const now = new Date();
         const elapsed = now - startTime;
-        const left = totalTime * 60_000 - elapsed;
+        const left = totalTime * 60 * 1000 - elapsed;
         
         currentTimeElement.innerText = timeFormat(elapsed);
         timeLeftElement.innerText = timeFormat(left);
@@ -231,8 +231,8 @@
         
         isPresentationRunning = true;
         
-        warningTimer = setTimeout(shortPeep, warningTime * 60_000);
-        alarmTimer = setTimeout(testAlarm, totalTime * 60_000);
+        warningTimer = setTimeout(shortPeep, warningTime * 60 * 1000);
+        alarmTimer = setTimeout(testAlarm, totalTime * 60 * 1000);
         clockTimer = setInterval(updateClock, 1000);
     }
 
