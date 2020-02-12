@@ -198,15 +198,15 @@
         const elapsed = now - startTime;
         const left = totalTime * 60_000 - elapsed;
         
-        currentTimeElement.innerHTML = timeFormat(elapsed);
-        timeLeftElement.innerHTML = timeFormat(left);
+        currentTimeElement.innerText = timeFormat(elapsed);
+        timeLeftElement.innerText = timeFormat(left);
     }
 
     function resetClock() {
         clearTimeout(clockTimer);
         
-        currentTimeElement.innerHTML = timeFormat();
-        timeLeftElement.innerHTML = timeFormat();
+        currentTimeElement.innerText = timeFormat();
+        timeLeftElement.innerText = timeFormat();
     }
 
     function reset() {
